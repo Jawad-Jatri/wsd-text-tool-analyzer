@@ -11,7 +11,11 @@ const textController = {
     },
     edit: async (req, res) => {
         const {id} = req.params;
-        res.render('edit', {text: await Text.findOne(id)});
+        res.render('edit', {
+            text: await Text.findOne(
+                {where: {id}}
+            )
+        });
     },
     update: async (req, res) => {
         const {id} = req.params;
