@@ -4,7 +4,7 @@
 <body>
 <h1>Edit Text</h1>
 <form action="/edit/<%= text.id %>" method="POST">
-    <input type="text" name="text" value="<%= text.text %>" required/>
+    <textarea type="text" name="text" placeholder="New text" required><%= text.text %></textarea>
     <button type="submit">Update</button>
 </form>
 </body>
