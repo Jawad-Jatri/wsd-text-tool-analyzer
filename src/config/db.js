@@ -1,5 +1,5 @@
-const config = require('../config');
-const { Sequelize } = require('sequelize');
+const config = require('./index');
+const {Sequelize} = require('sequelize');
 const mysql = require('mysql2/promise');
 
 (async () => {

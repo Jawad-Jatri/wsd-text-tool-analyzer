@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head><title>Text List</title></head>
+<body>
+<h1>Text List</h1>
+<ul>
+    <% texts.forEach((text) => { %>
+        <li>
+            <%= text.text %>
+            <a href="/edit/<%= text.id %>">Edit</a>
+            <form action="/delete/<%= text.id %>" method="POST" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }) %>
+</ul>
+<form action="/create" method="POST">
+    <input type="text" name="text" placeholder="New text" required/>
+    <button type="submit">Add</button>
+</form>
+</body>
+</html>

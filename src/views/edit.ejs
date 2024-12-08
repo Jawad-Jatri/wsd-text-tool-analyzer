@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><title>Edit Text</title></head>
+<body>
+<h1>Edit Text</h1>
+<form action="/edit/<%= text.id %>" method="POST">
+    <input type="text" name="text" value="<%= text.text %>" required/>
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>
