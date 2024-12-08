@@ -1,4 +1,4 @@
-const Text = require('../models/text');
+const {Text} = require('../models');
 
 const textController = {
     list: async (req, res) => {
