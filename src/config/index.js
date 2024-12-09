@@ -11,4 +11,8 @@ module.exports = {
         port: process.env.DB_PORT || 3306,
         dialect: process.env.DB_DIALECT || 'mysql',
     },
+    rateLimit: {
+        max: process.env.MAX_RATE_LIMIT || 5,
+        windowInS: process.env.RATE_LIMIT_WINDOW_IN_SECONDS || 60,
+    }
 };
