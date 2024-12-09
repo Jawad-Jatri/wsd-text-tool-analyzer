@@ -30,7 +30,7 @@ describe('API e2e test', () => {
                         code: expect.any(Number),
                         message: expect.any(String),
                         data: expect.objectContaining({
-                            count: expect.any(Number),
+                            count: 16,
                         })
                     })
                 );
@@ -63,7 +63,7 @@ describe('API e2e test', () => {
                         code: expect.any(Number),
                         message: expect.any(String),
                         data: expect.objectContaining({
-                            count: expect.any(Number),
+                            count: 76,
                         })
                     })
                 );
@@ -96,7 +96,7 @@ describe('API e2e test', () => {
                         code: expect.any(Number),
                         message: expect.any(String),
                         data: expect.objectContaining({
-                            count: expect.any(Number),
+                            count: 2,
                         })
                     })
                 );
@@ -129,7 +129,7 @@ describe('API e2e test', () => {
                         code: expect.any(Number),
                         message: expect.any(String),
                         data: expect.objectContaining({
-                            count: expect.any(Number),
+                            count: 2,
                         })
                     })
                 );
@@ -164,7 +164,7 @@ describe('API e2e test', () => {
                         data: expect.arrayContaining([
                             expect.objectContaining({
                                 paragraph: expect.any(String),
-                                words: expect.arrayContaining([
+                                longestWords: expect.arrayContaining([
                                     expect.any(String),
                                 ])
                             })
