@@ -1,7 +1,6 @@
 const request = require('supertest');
-const {sequelize, Text} = require('../src/models');
-
-const testingText = "The quick brown fox jumps over the lazy dog. \nThe lazy dog slept in the sun.";
+const {sequelize, Text} = require('../../src/models');
+const {fakeText} = require('../mocks');
 
 let textId;
 let rateLimit = 5;
@@ -10,7 +9,7 @@ let windowLimit = 10;
 beforeAll(async () => {
     await sequelize.sync({force: true});
     const text = await Text.create({
-        text: testingText
+        text: fakeText
     });
     textId = text.id;
 });
@@ -19,14 +18,14 @@ afterAll(async () => {
     await sequelize.close();
 });
 
-describe('API e2e test', () => {
+describe('Rate limit test', () => {
     let app;
 
     beforeEach(async () => {
         jest.resetModules();
         process.env.MAX_RATE_LIMIT = rateLimit;
         process.env.RATE_LIMIT_WINDOW_IN_SECONDS = windowLimit;
-        app = require('../src/app');
+        app = require('../../src/app');
     });
 
     it('Should allow requests up to the limit', async () => {

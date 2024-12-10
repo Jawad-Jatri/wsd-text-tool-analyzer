@@ -1,33 +1,50 @@
-const {Text} = require('../models');
+const {getTextById, insertText, findAllText, deleteText, updateText} = require('../services/textService');
 
 const textController = {
     list: async (req, res) => {
-        res.render('index', {texts: await Text.findAll()});
+        try {
+            res.render('index', {texts: await findAllText()});
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     create: async (req, res) => {
-        const {text} = req.body;
-        await Text.create({text});
-        res.redirect('/');
+        try {
+            const {text} = req.body;
+            await insertText(text);
+            res.redirect('/');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     edit: async (req, res) => {
-        const {id} = req.params;
-        res.render('edit', {
-            text: await Text.findOne(
-                {where: {id}}
-            )
-        });
+        try {
+            const {id} = req.params;
+            res.render('edit', {
+                text: await getTextById(id)
+            });
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     update: async (req, res) => {
-        const {id} = req.params;
-        const {text} = req.body;
-        await Text.update({text},
-            {where: {id: id}});
-        res.redirect('/');
+        try {
+            const {id} = req.params;
+            const {text} = req.body;
+            await updateText(id, text);
+            res.redirect('/');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     delete: async (req, res) => {
-        const {id} = req.params;
-        await Text.destroy({where: {id: id}});
-        res.redirect('/');
+        try {
+            const {id} = req.params;
+            await deleteText(id);
+            res.redirect('/');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
 };
 
