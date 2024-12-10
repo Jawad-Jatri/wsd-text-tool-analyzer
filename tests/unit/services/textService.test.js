@@ -204,6 +204,15 @@ describe('Text Service unit test', () => {
             expect(typeof res).toBe('number');
             expect(res).toEqual(fakeTextAnalysisReport.sentenceCount);
         });
+
+        it('should return text sentence count 0', async () => {
+            Text.findOne.mockResolvedValue({id: 1, text: 'Hello World'});
+
+            const res = await sentenceCountInText(1);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: 1}});
+            expect(typeof res).toBe('number');
+            expect(res).toEqual(0);
+        });
     });
     describe('paragraphCountInText', () => {
         it('should throw BadRequestError if id is not provided', async () => {
