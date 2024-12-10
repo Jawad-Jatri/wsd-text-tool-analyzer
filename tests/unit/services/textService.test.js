@@ -1,8 +1,19 @@
 const Text = require('../../../src/models/Text');
-const {getTextById, findAllText, insertText, deleteText, updateText} = require('../../../src/services/textService');
+const {
+    getTextById,
+    findAllText,
+    insertText,
+    deleteText,
+    updateText,
+    wordCountInText,
+    characterCountInText,
+    sentenceCountInText,
+    paragraphCountInText,
+    longestWordsByParagraphs
+} = require('../../../src/services/textService');
 const BadRequestError = require("../../../src/common/exceptions/badRequestError");
 const NotFoundError = require("../../../src/common/exceptions/notFoundError");
-const {fakeTexts, fakeText} = require('../../mocks');
+const {fakeTexts, fakeText, fakeTextAnalysisReport} = require('../../mocks');
 
 jest.mock('../../../src/models/Text', () => ({
     findOne: jest.fn(),
@@ -123,6 +134,121 @@ describe('Text Service unit test', () => {
 
             const res = updateText(1, fakeText);
             await expect(res).rejects.toThrow('DB error');
+        });
+    });
+    describe('wordCountInText', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = wordCountInText();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            Text.findOne.mockResolvedValue(null);
+            const res = wordCountInText(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return text word count', async () => {
+            Text.findOne.mockResolvedValue({id: fakeTextAnalysisReport.id, text: fakeTextAnalysisReport.text});
+
+            const res = await wordCountInText(fakeTextAnalysisReport.id);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(typeof res).toBe('number');
+            expect(res).toEqual(fakeTextAnalysisReport.wordCount);
+        });
+    });
+    describe('characterCountInText', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = characterCountInText();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            Text.findOne.mockResolvedValue(null);
+            const res = characterCountInText(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return text character count', async () => {
+            Text.findOne.mockResolvedValue({id: fakeTextAnalysisReport.id, text: fakeTextAnalysisReport.text});
+
+            const res = await characterCountInText(fakeTextAnalysisReport.id);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(typeof res).toBe('number');
+            expect(res).toEqual(fakeTextAnalysisReport.characterCount);
+        });
+    });
+    describe('sentenceCountInText', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = sentenceCountInText();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            Text.findOne.mockResolvedValue(null);
+            const res = sentenceCountInText(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return text sentence count', async () => {
+            Text.findOne.mockResolvedValue({id: fakeTextAnalysisReport.id, text: fakeTextAnalysisReport.text});
+
+            const res = await sentenceCountInText(fakeTextAnalysisReport.id);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(typeof res).toBe('number');
+            expect(res).toEqual(fakeTextAnalysisReport.sentenceCount);
+        });
+    });
+    describe('paragraphCountInText', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = paragraphCountInText();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            Text.findOne.mockResolvedValue(null);
+            const res = paragraphCountInText(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return text paragraph count', async () => {
+            Text.findOne.mockResolvedValue({id: fakeTextAnalysisReport.id, text: fakeTextAnalysisReport.text});
+
+            const res = await paragraphCountInText(fakeTextAnalysisReport.id);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(typeof res).toBe('number');
+            expect(res).toEqual(fakeTextAnalysisReport.paragraphCount);
+        });
+    });
+    describe('longestWordsByParagraphs', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = longestWordsByParagraphs();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            Text.findOne.mockResolvedValue(null);
+            const res = longestWordsByParagraphs(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return longest words by paragraphs', async () => {
+            Text.findOne.mockResolvedValue({id: fakeTextAnalysisReport.id, text: fakeTextAnalysisReport.text});
+
+            const res = await longestWordsByParagraphs(fakeTextAnalysisReport.id);
+            expect(Text.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(Array.isArray(res)).toBe(true);
+            expect(res).toEqual(fakeTextAnalysisReport.longestWordsInParagraphs);
         });
     });
 });
