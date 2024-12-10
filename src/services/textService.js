@@ -5,55 +5,61 @@ const BadRequestError = require("../common/exceptions/badRequestError");
 const textService = {
     getTextById: async (id) => {
         try {
+            if (!id) {
+                throw new BadRequestError("Id is required!");
+            }
             const text = await Text.findOne(
                 {where: {id}}
-            )
+            );
             if (!text) {
-                throw new NotFoundError("Text not found!")
+                throw new NotFoundError("Text not found!");
             }
-            return text
+            return text;
         } catch (error) {
-            throw error
+            throw error;
         }
     },
     findAllText: async () => {
         try {
-            return Text.findAll()
+            return await Text.findAll();
         } catch (error) {
-            throw error
+            throw error;
         }
     },
     insertText: async (text) => {
         try {
             if (!text) {
-                throw new BadRequestError("Text is required!")
+                throw new BadRequestError("Text is required!");
             }
-            return await Text.create(text)
+            return await Text.create({text});
         } catch (error) {
-            throw error
+            throw error;
         }
     },
     deleteText: async (id) => {
         try {
-            return Text.destroy({where: {id: id}});
+            if (!id) {
+                throw new BadRequestError("Id is required!");
+            }
+            return await Text.destroy({where: {id: id}});
         } catch (error) {
-            throw error
+            throw error;
         }
     },
     updateText: async (id, text) => {
         try {
             if (!id) {
-                throw new BadRequestError("Id is required!")
+                throw new BadRequestError("Id is required!");
             }
             if (!text) {
-                throw new BadRequestError("Text is required!")
+                throw new BadRequestError("Text is required!");
             }
             await Text.update({text},
                 {where: {id: id}});
 
-            return this.getTextById(id)
+            return await textService.getTextById(id);
         } catch (error) {
-            throw error
+            throw error;
         }
     },
 };

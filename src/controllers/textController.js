@@ -1,11 +1,11 @@
-const {getTextById, insertText, findAllText, deleteText, updateText} = require('../services/textService')
+const {getTextById, insertText, findAllText, deleteText, updateText} = require('../services/textService');
 
 const textController = {
     list: async (req, res) => {
         try {
             res.render('index', {texts: await findAllText()});
         } catch (error) {
-
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     },
     create: async (req, res) => {
@@ -14,7 +14,7 @@ const textController = {
             await insertText(text);
             res.redirect('/');
         } catch (error) {
-
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     },
     edit: async (req, res) => {
@@ -24,7 +24,7 @@ const textController = {
                 text: await getTextById(id)
             });
         } catch (error) {
-
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     },
     update: async (req, res) => {
@@ -34,16 +34,16 @@ const textController = {
             await updateText(id, text);
             res.redirect('/');
         } catch (error) {
-
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     },
     delete: async (req, res) => {
         try {
             const {id} = req.params;
-            await deleteText(id)
+            await deleteText(id);
             res.redirect('/');
         } catch (error) {
-
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     },
 };
