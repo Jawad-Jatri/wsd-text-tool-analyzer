@@ -14,5 +14,9 @@ module.exports = {
     rateLimit: {
         max: process.env.MAX_RATE_LIMIT || 5,
         windowInS: process.env.RATE_LIMIT_WINDOW_IN_SECONDS || 60,
-    }
+    },
+    cache: {
+        prefix: process.env.CACHE_PREFIX || 'WSD',
+        timeout: process.env.CACHE_TIMEOUT_IN_SECONDS || 60,
+    },
 };
