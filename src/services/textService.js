@@ -62,6 +62,58 @@ const textService = {
             throw error;
         }
     },
+    wordCountInText: async (id) => {
+        try {
+            const {text} = await textService.getTextById(id);
+            return text.replace(/[.,!?;:()"'`]/g, "").split(/\s+/).length;
+        } catch (error) {
+            throw error;
+        }
+    },
+    characterCountInText: async (id) => {
+        try {
+            const {text} = await textService.getTextById(id);
+            return text.length;
+        } catch (error) {
+            throw error;
+        }
+    },
+    sentenceCountInText: async (id) => {
+        try {
+            const {text} = await textService.getTextById(id);
+            return (text.match(/[.!?]/g) || []).length;
+        } catch (error) {
+            throw error;
+        }
+    },
+    paragraphCountInText: async (id) => {
+        try {
+            const {text} = await textService.getTextById(id);
+            return text.split('\n').length;
+        } catch (error) {
+            throw error;
+        }
+    },
+    longestWordsByParagraphs: async (id) => {
+        try {
+            const {text} = await textService.getTextById(id);
+            const paragraphs = text.split('\n');
+
+            return paragraphs.map(paragraph => {
+                const words = paragraph.replace(/[.,!?;:()"'`]/g, " ").split(/\s+/);
+                const maxLength = Math.max(...words.map(word => word.length));
+                const longestWords = words.filter(word => word.length === maxLength);
+
+                return {
+                    paragraph,
+                    longestWords
+                };
+            });
+
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 module.exports = textService;
