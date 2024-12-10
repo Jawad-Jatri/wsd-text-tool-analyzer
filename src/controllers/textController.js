@@ -24,9 +24,9 @@ const textController = {
             {where: {id: id}});
         res.redirect('/');
     },
-    delete: (req, res) => {
+    delete: async (req, res) => {
         const {id} = req.params;
-        Text.destroy({where: {id: id}});
+        await Text.destroy({where: {id: id}});
         res.redirect('/');
     },
 };
