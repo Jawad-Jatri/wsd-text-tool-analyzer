@@ -16,4 +16,4 @@ Compile & run the project:
 
 Run tests
 
-1. run "yarn test"
+1. run "yarn test" (use "yarn win:test" for windows platform)
