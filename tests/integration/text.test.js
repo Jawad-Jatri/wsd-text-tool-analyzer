@@ -37,12 +37,12 @@ describe('Text crud Application', () => {
     it('should redirect unauthenticated user to the home page (login)', async () => {
         const res = await request(app).get('/dashboard');
         expect(res.statusCode).toBe(302);
-        expect(res.headers.location).toBe('/')
+        expect(res.headers.location).toBe('/');
     });
 
     it('should load all texts in page', async () => {
         const agent = request.agent(app); // Maintain session across requests
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent.get('/dashboard');
         expect(res.statusCode).toBe(200);
@@ -51,7 +51,7 @@ describe('Text crud Application', () => {
 
     it('should create a new text', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent
             .post('/create')
@@ -63,7 +63,7 @@ describe('Text crud Application', () => {
 
     it('should return error page for blank text', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent
             .post('/create')
@@ -74,7 +74,7 @@ describe('Text crud Application', () => {
 
     it('should render edit page', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent
             .get('/edit/1');
@@ -84,7 +84,7 @@ describe('Text crud Application', () => {
 
     it('should return error page for text not found', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent
             .get('/edit/100');
@@ -94,7 +94,7 @@ describe('Text crud Application', () => {
 
     it('should update an existing text', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const editRes = await agent
             .post(`/edit/1`)
@@ -107,7 +107,7 @@ describe('Text crud Application', () => {
 
     it('should return error page for blank text update', async () => {
         const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code').expect(302); // Mock OAuth callback
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
 
         const res = await agent
             .post('/edit/1')
