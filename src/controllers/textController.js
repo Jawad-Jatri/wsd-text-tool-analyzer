@@ -12,7 +12,7 @@ const textController = {
         try {
             const {text} = req.body;
             await insertText(text);
-            res.redirect('/');
+            res.redirect('/dashboard');
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
         }
@@ -32,7 +32,7 @@ const textController = {
             const {id} = req.params;
             const {text} = req.body;
             await updateText(id, text);
-            res.redirect('/');
+            res.redirect('/dashboard');
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
         }
@@ -41,7 +41,7 @@ const textController = {
         try {
             const {id} = req.params;
             await deleteText(id);
-            res.redirect('/');
+            res.redirect('/dashboard');
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
         }

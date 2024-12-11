@@ -28,6 +28,9 @@ describe('Config tests', () => {
         expect(config.db.dialect).toBe('mysql');
         expect(config.rateLimit.max).toBe(5);
         expect(config.rateLimit.windowInS).toBe(60);
+        expect(config.oauth.jwtToken).toBe("Lkbn1h?b5IQE&ucKIt{y3?PpCGDw%S3k6tbM:/WoI>+2qO8o");
+        expect(config.oauth.sessionToken).toBe("bn1E&ucKIt{y3?PpCGDw%S3k6tb");
+        expect(config.oauth.callbackUrl).toBe("/auth/google/callback");
     });
 
     it('should use environment variables if set', () => {
@@ -41,6 +44,9 @@ describe('Config tests', () => {
         process.env.DB_DIALECT = 'postgres';
         process.env.MAX_RATE_LIMIT = 10;
         process.env.RATE_LIMIT_WINDOW_IN_SECONDS = 30;
+        process.env.OAUTH_CALLBACK_URL = "/auth/google/callback"
+        process.env.JWT_SECRET = "Lkbn1h?b5IQE&ucKIt{y3?PpCGDw%S3k6tbM:/WoI>+2qO8o"
+        process.env.SESSION_SECRET = "bn1E&ucKIt{y3?PpCGDw%S3k6tb"
 
         jest.resetModules();
         const config = require('../../../src/config'); // Adjust the path to your config file
@@ -55,6 +61,9 @@ describe('Config tests', () => {
         expect(config.db.dialect).toBe('postgres');
         expect(parseInt(config.rateLimit.max)).toBe(10);
         expect(parseInt(config.rateLimit.windowInS)).toBe(30);
+        expect(config.oauth.jwtToken).toBe("Lkbn1h?b5IQE&ucKIt{y3?PpCGDw%S3k6tbM:/WoI>+2qO8o");
+        expect(config.oauth.sessionToken).toBe("bn1E&ucKIt{y3?PpCGDw%S3k6tb");
+        expect(config.oauth.callbackUrl).toBe("/auth/google/callback");
     });
 
     it('should use test database name if NODE_ENV is test', () => {

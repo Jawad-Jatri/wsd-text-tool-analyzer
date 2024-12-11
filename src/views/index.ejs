@@ -3,6 +3,10 @@
 <head><title>Text List</title></head>
 <body>
 <h1>Text List</h1>
+<form action="/create" method="POST">
+    <textarea type="text" name="text" placeholder="New text" required></textarea>
+    <button type="submit">Add</button>
+</form>
 <ul>
     <% texts.forEach((text) => { %>
         <li>
@@ -14,9 +18,5 @@
         </li>
     <% }) %>
 </ul>
-<form action="/create" method="POST">
-    <textarea type="text" name="text" placeholder="New text" required></textarea>
-    <button type="submit">Add</button>
-</form>
 </body>
 </html>
