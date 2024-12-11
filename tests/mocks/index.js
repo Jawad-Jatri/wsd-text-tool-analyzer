@@ -27,3 +27,9 @@ module.exports.fakeTextAnalysisReport = {
         }
     ],
 };
+module.exports.fakeUser = {
+    name: "John",
+    email: "john@gmail.com",
+    googleId: 10000000000000,
+    status: true
+};

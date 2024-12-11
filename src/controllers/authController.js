@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config');
-const successResponse = require("../common/response/successResponse");
 const BadRequestError = require("../common/exceptions/badRequestError");
+const successResponse = require("../common/response/successResponse");
+const authService = require("../services/authService");
 
 const authController = {
     login: async (req, res) => {
@@ -14,13 +13,10 @@ const authController = {
     callback: async (req, res, next) => {
         try {
             const {state} = req.query;
-            console.log('state', state);
             if (state === 'web') {
                 res.redirect('/dashboard');
             } else if (state === 'api') {
-                const token = jwt.sign({id: req.user.id}, config.oauth.jwtToken, {expiresIn: '1h'});
-                console.log('token', token);
-                return successResponse(res, {accessToken: token});
+                return successResponse(res, {accessToken: await authService.generateToken(req.user.id)});
             } else {
                 next(new BadRequestError("Invalid state"));
             }
@@ -30,11 +26,9 @@ const authController = {
     },
     logout: async (req, res) => {
         try {
-            // Implement OAuth callback logic
-            //...
-        } catch (err) {
-            // Handle error
-            //...
+            res.redirect('/');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
         }
     }
 };

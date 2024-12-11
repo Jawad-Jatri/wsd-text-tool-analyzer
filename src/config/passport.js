@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const config = require("../config");
+const {findOrCreateUserByEmail} = require("../services/userService");
 
 passport.use(
     new GoogleStrategy(
@@ -9,23 +10,19 @@ passport.use(
             clientSecret: config.oauth.googleClientSecret,
             callbackURL: `${config.oauth.callbackUrl}`,
         },
-        (accessToken, refreshToken, profile, done) => {
-            console.log('accessToken', accessToken)
-            console.log('profile', profile)
-            const user = {id: profile.id, displayName: profile.displayName, accessToken};
+        async (accessToken, refreshToken, profile, done) => {
+            const user = await findOrCreateUserByEmail(profile.displayName, profile._json.email, profile.id);
             done(null, user);
         }
     )
 );
 
 passport.serializeUser((user, done) => {
-    console.log('user', user)
-    done(null, user);
+    done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
-    // Mock user fetching logic
-    const user = {id, displayName: 'John Doe'};
+    const user = {id};
     done(null, user);
 });
 
