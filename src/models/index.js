@@ -1,9 +1,11 @@
 const sequelize = require('../config/db');
 const Text = require('../models/Text');
+const User = require('../models/User');
 
 const db = {
     sequelize,
     Text,
+    User
 };
 
 (async () => {
