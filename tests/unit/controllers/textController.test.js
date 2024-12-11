@@ -29,12 +29,12 @@ describe('Text Controller unit test', () => {
         });
     });
     describe('create', () => {
-        it('should redirect to \'/\' page after create', async () => {
+        it('should redirect to \'/dashboard\' page after create', async () => {
             req.body = {text: fakeText};
             textService.insertText.mockResolvedValue(fakeText);
             await create(req, res);
             expect(textService.insertText).toHaveBeenCalledWith(fakeText);
-            expect(res.redirect).toHaveBeenCalledWith('/');
+            expect(res.redirect).toHaveBeenCalledWith('/dashboard');
         });
         it('should throw error for blank text create', async () => {
             req.body = {text: null};
@@ -71,13 +71,13 @@ describe('Text Controller unit test', () => {
         });
     });
     describe('update', () => {
-        it('should redirect to \'/\' page after update', async () => {
+        it('should redirect to \'/dashboard\' page after update', async () => {
             req.params = {id: fakeTexts[0].id};
             req.body = {text: fakeText};
             textService.updateText.mockResolvedValue({...fakeTexts[0], text: fakeText});
             await update(req, res);
             expect(textService.updateText).toHaveBeenCalledWith(fakeTexts[0].id, fakeText);
-            expect(res.redirect).toHaveBeenCalledWith('/');
+            expect(res.redirect).toHaveBeenCalledWith('/dashboard');
         });
         it('should throw error for invalid text on update', async () => {
             req.params = {id: fakeTexts[0].id};
@@ -95,12 +95,12 @@ describe('Text Controller unit test', () => {
         });
     });
     describe('delete', () => {
-        it('should redirect to \'/\' page after delete', async () => {
+        it('should redirect to \'/dashboard\' page after delete', async () => {
             req.params = {id: fakeTexts[0].id};
             textService.deleteText.mockResolvedValue({});
             await del(req, res);
             expect(textService.deleteText).toHaveBeenCalledWith(fakeTexts[0].id);
-            expect(res.redirect).toHaveBeenCalledWith('/');
+            expect(res.redirect).toHaveBeenCalledWith('/dashboard');
         });
         it('should throw error for invalid text on delete', async () => {
             req.params = {};

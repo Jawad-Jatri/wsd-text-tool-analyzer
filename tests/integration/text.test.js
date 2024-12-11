@@ -13,8 +13,10 @@ afterAll(async () => {
     await sequelize.close(); // Close database connection
 });
 
+let agent;
+
 describe('Text crud Application', () => {
-    beforeEach(() => {
+    beforeAll(async () => {
         // Mock Google's token endpoint
         nock('https://www.googleapis.com')
             .post('/oauth2/v4/token')
@@ -33,6 +35,9 @@ describe('Text crud Application', () => {
                 name: 'Test User',
                 email: 'testuser@example.com',
             });
+        agent = request.agent(app); // Maintain session across requests
+        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
+
     });
     it('should redirect unauthenticated user to the home page (login)', async () => {
         const res = await request(app).get('/dashboard');
@@ -41,18 +46,12 @@ describe('Text crud Application', () => {
     });
 
     it('should load all texts in page', async () => {
-        const agent = request.agent(app); // Maintain session across requests
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent.get('/dashboard');
         expect(res.statusCode).toBe(200);
         expect(res.text).toContain('Text List');
     });
 
     it('should create a new text', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent
             .post('/create')
             .send(`text=${fakeText}`);
@@ -62,9 +61,6 @@ describe('Text crud Application', () => {
     });
 
     it('should return error page for blank text', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent
             .post('/create')
             .send(`text=`);
@@ -73,9 +69,6 @@ describe('Text crud Application', () => {
     });
 
     it('should render edit page', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent
             .get('/edit/1');
         expect(res.statusCode).toBe(200);
@@ -83,9 +76,6 @@ describe('Text crud Application', () => {
     });
 
     it('should return error page for text not found', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent
             .get('/edit/100');
         expect(res.statusCode).toBe(200);
@@ -93,9 +83,6 @@ describe('Text crud Application', () => {
     });
 
     it('should update an existing text', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const editRes = await agent
             .post(`/edit/1`)
             .send(`text=Updated --- ${fakeText}`);
@@ -106,9 +93,6 @@ describe('Text crud Application', () => {
     });
 
     it('should return error page for blank text update', async () => {
-        const agent = request.agent(app);
-        await agent.get('/auth/google/callback?code=test_code&state=web').expect(302); // Mock OAuth callback
-
         const res = await agent
             .post('/edit/1')
             .send(`text=`);
@@ -117,10 +101,10 @@ describe('Text crud Application', () => {
     });
 
     it('should delete an existing text', async () => {
-        const deleteRes = await request(app).post('/delete/1');
+        const deleteRes = await agent.post('/delete/1');
         expect(deleteRes.statusCode).toBe(302);
 
-        const updatedListRes = await request(app).get('/dashboard');
+        const updatedListRes = await agent.get('/dashboard');
         expect(updatedListRes.text).not.toContain(`${fakeText}`);
     });
 });
