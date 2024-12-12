@@ -1,6 +1,8 @@
 const {Text} = require('../models');
 const NotFoundError = require("../common/exceptions/notFoundError");
 const BadRequestError = require("../common/exceptions/badRequestError");
+const cacheFunction = require('../../src/common/utils/cacheFunction')
+const cacheKey = require('../../src/common/constants/cacheKey')
 
 const textService = {
     getTextById: async (id) => {
@@ -154,5 +156,7 @@ const textService = {
         }
     },
 };
+
+textService.getTextById = cacheFunction(textService.getTextById, cacheKey.getTextById);
 
 module.exports = textService;

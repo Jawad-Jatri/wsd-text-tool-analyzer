@@ -15,7 +15,9 @@ const {
 const BadRequestError = require("../../../src/common/exceptions/badRequestError");
 const NotFoundError = require("../../../src/common/exceptions/notFoundError");
 const {fakeTexts, fakeText, fakeTextAnalysisReport} = require('../../mocks');
+const cacheFunction = require("../../../src/common/utils/cacheFunction")
 
+jest.mock("../../../src/common/utils/cacheFunction")
 jest.mock('../../../src/models', () => {
     const {fakeTexts} = require('../../mocks');
     const SequelizeMock = require('sequelize-mock');
@@ -26,8 +28,13 @@ jest.mock('../../../src/models', () => {
     };
 });
 
+beforeEach(() => {
+    // This ensures that the cacheFunction wrapper is applied correctly in the test
+    getTextById = cacheFunction(getTextById, 'getTextById');
+});
 describe('Text Service unit test', () => {
     let TextMock;
+    let cacheMock;
 
     beforeAll(() => {
         const {Text} = require('../../../src/models');
@@ -35,6 +42,10 @@ describe('Text Service unit test', () => {
     });
 
     describe('getTextById', () => {
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+
         it('should throw BadRequestError if id is not provided', async () => {
             const res = getTextById();
             await expect(res).rejects.toThrow(BadRequestError);
@@ -49,10 +60,14 @@ describe('Text Service unit test', () => {
         });
 
         it('should return the text if found', async () => {
+            cacheMock.get.mockReturnValueOnce(null);
             TextMock.findOne = jest.fn().mockResolvedValue(fakeTexts[0]);
 
             const res = await getTextById(1);
+
+            expect(cacheMock.get).toHaveBeenCalledWith('getTextById:1');
             expect(TextMock.findOne).toHaveBeenCalledWith({where: {id: 1}});
+            expect(cacheMock.set).toHaveBeenCalledWith('getTextById:1', fakeTexts[0]);
             expect(res).toEqual(fakeTexts[0]);
         });
     });

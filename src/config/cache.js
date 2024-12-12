@@ -20,6 +20,12 @@ class Cache extends CacheInterface {
         cache.del(this.generateKey(key));
     }
 
+    async deleteAllBykeyPattern(pattern) {
+        const keys = cache.keys();
+        const keysToDelete = keys.filter((key) => pattern.test(key));
+        keysToDelete.forEach((key) => cache.del(key));
+    }
+
     check(key) {
         return cache.has(this.generateKey(key));
     }
