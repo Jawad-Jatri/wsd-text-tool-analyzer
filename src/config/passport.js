@@ -11,7 +11,7 @@ passport.use(
             callbackURL: `${config.oauth.callbackUrl}`,
         },
         async (accessToken, refreshToken, profile, done) => {
-            const user = await findOrCreateUserByEmail(profile.displayName, profile._json.email, profile.id);
+            const user = await findOrCreateUserByEmail(profile.displayName, profile._json.email, profile._json.id);
             done(null, user);
         }
     )
