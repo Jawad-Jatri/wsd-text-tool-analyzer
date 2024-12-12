@@ -1,4 +1,4 @@
-const {User, Text} = require('../models');
+const {User} = require('../models');
 const config = require('../config');
 const NotFoundError = require("../common/exceptions/notFoundError");
 const BadRequestError = require("../common/exceptions/badRequestError");

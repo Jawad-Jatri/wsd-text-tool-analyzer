@@ -19,6 +19,18 @@ const textService = {
             throw error;
         }
     },
+    getTextsByUserId: async (userId) => {
+        try {
+            if (!userId) {
+                throw new BadRequestError("User id is required!");
+            }
+            return await Text.findAll(
+                {where: {UserId: userId}}
+            );
+        } catch (error) {
+            throw error;
+        }
+    },
     findAllText: async () => {
         try {
             return await Text.findAll();
@@ -26,12 +38,15 @@ const textService = {
             throw error;
         }
     },
-    insertText: async (text) => {
+    insertText: async (text, userId) => {
         try {
+            if (!userId) {
+                throw new BadRequestError("User id is required!");
+            }
             if (!text) {
                 throw new BadRequestError("Text is required!");
             }
-            return await Text.create({text});
+            return await Text.create({text, UserId: userId});
         } catch (error) {
             throw error;
         }

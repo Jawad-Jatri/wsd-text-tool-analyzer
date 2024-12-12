@@ -1,9 +1,16 @@
-const {getTextById, insertText, findAllText, deleteText, updateText} = require('../services/textService');
+const {
+    getTextById,
+    getTextsByUserId,
+    insertText,
+    deleteText,
+    updateText
+} = require('../services/textService');
 
 const textController = {
     list: async (req, res) => {
         try {
-            res.render('index', {texts: await findAllText()});
+            const {id} = req.user
+            res.render('index', {texts: await getTextsByUserId(id)});
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
         }
@@ -11,7 +18,8 @@ const textController = {
     create: async (req, res) => {
         try {
             const {text} = req.body;
-            await insertText(text);
+            const {id} = req.user
+            await insertText(text, id);
             res.redirect('/dashboard');
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
