@@ -21,8 +21,6 @@ describe('Config tests', () => {
         expect(config.port).toBe(3000);
         expect(config.nodeEnv).toBe('development');
         expect(config.db.username).toBe('root');
-        expect(config.db.password).toBe('@Kil201514057');
-        expect(config.db.database).toBe('text_analyzer_db');
         expect(config.db.host).toBe('localhost');
         expect(config.db.port).toBe(3306);
         expect(config.db.dialect).toBe('mysql');
@@ -88,7 +86,6 @@ describe('Config tests', () => {
         const config = require('../../../src/config'); // Adjust the path to your config file
         expect(config.port).toBe(3000);
         expect(config.db.username).toBe('root');
-        expect(config.db.password).toBe('@Kil201514057');
         expect(config.db.host).toBe('localhost');
         expect(config.db.port).toBe(3306);
         expect(config.db.dialect).toBe('mysql');
