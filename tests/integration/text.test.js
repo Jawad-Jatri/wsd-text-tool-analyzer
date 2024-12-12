@@ -75,6 +75,13 @@ describe('Text crud Application', () => {
         expect(res.text).toContain(fakeText);
     });
 
+    it('should render report page', async () => {
+        const res = await agent
+            .get('/report/1');
+        expect(res.statusCode).toBe(200);
+        expect(res.text).toContain(`Text: ${fakeText}`);
+    });
+
     it('should return error page for text not found', async () => {
         const res = await agent
             .get('/edit/100');

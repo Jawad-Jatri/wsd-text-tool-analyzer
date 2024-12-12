@@ -1,6 +1,6 @@
 const BadRequestError = require("../../../src/common/exceptions/badRequestError");
-const {list, create, edit, update, delete: del} = require('../../../src/controllers/textController');
-const {fakeTexts, fakeText} = require('../../mocks');
+const {list, create, edit, update, delete: del, report} = require('../../../src/controllers/textController');
+const {fakeTexts, fakeText, fakeTextAnalysisReport} = require('../../mocks');
 
 jest.mock('../../../src/services/textService');
 const textService = require('../../../src/services/textService');
@@ -117,6 +117,37 @@ describe('Text Controller unit test', () => {
             req.params = {id: fakeTexts[0].id};
             textService.deleteText.mockRejectedValue(new Error('DB Error'));
             await del(req, res);
+            expect(res.render).toHaveBeenCalledWith('error', {status: 500, error: 'DB Error'});
+        });
+    });
+    describe('report', () => {
+        it('should render report page', async () => {
+            req.user.id = 1
+            textService.getReportByTextId.mockResolvedValue({
+                id: fakeTextAnalysisReport.id,
+                text: fakeTextAnalysisReport.text,
+                words: fakeTextAnalysisReport.wordCount,
+                characters: fakeTextAnalysisReport.characterCount,
+                paragraphs: fakeTextAnalysisReport.paragraphCount,
+                sentence: fakeTextAnalysisReport.sentenceCount,
+                longestWord: fakeTextAnalysisReport.longestWordsInParagraphs,
+            });
+            await report(req, res);
+            expect(res.render).toHaveBeenCalledWith('report', {
+                report: {
+                    id: fakeTextAnalysisReport.id,
+                    text: fakeTextAnalysisReport.text,
+                    words: fakeTextAnalysisReport.wordCount,
+                    characters: fakeTextAnalysisReport.characterCount,
+                    paragraphs: fakeTextAnalysisReport.paragraphCount,
+                    sentence: fakeTextAnalysisReport.sentenceCount,
+                    longestWord: fakeTextAnalysisReport.longestWordsInParagraphs,
+                }
+            });
+        });
+        it('should throw error for DB issue', async () => {
+            textService.getReportByTextId.mockRejectedValue(new Error('DB Error'));
+            await report(req, res);
             expect(res.render).toHaveBeenCalledWith('error', {status: 500, error: 'DB Error'});
         });
     });
