@@ -3,10 +3,12 @@ module.exports.fakeTexts = [
     {
         id: 1,
         text: 'Hello World',
+        UserId: 1
     },
     {
         id: 2,
         text: "The quick brown fox jumps over the lazy dog. \nThe lazy dog slept in the sun.",
+        UserId: 2
     }
 ];
 module.exports.fakeTextAnalysisReport = {

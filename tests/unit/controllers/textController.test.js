@@ -9,7 +9,7 @@ describe('Text Controller unit test', () => {
     let req, res;
     beforeEach(() => {
         jest.clearAllMocks();
-        req = {params: {}};
+        req = {params: {}, user: {}};
         res = {
             render: jest.fn(),
             redirect: jest.fn()
@@ -18,12 +18,14 @@ describe('Text Controller unit test', () => {
 
     describe('list', () => {
         it('should render an index page', async () => {
-            textService.findAllText.mockResolvedValue(fakeTexts);
+            req.user.id = 1
+            const textsByUser = fakeTexts.filter(obj => obj.UserId === req.user.id)
+            textService.getTextsByUserId.mockResolvedValue(textsByUser);
             await list(req, res);
-            expect(res.render).toHaveBeenCalledWith('index', {texts: fakeTexts});
+            expect(res.render).toHaveBeenCalledWith('index', {texts: textsByUser});
         });
         it('should throw error for DB issue', async () => {
-            textService.findAllText.mockRejectedValue(new Error('DB Error'));
+            textService.getTextsByUserId.mockRejectedValue(new Error('DB Error'));
             await list(req, res);
             expect(res.render).toHaveBeenCalledWith('error', {status: 500, error: 'DB Error'});
         });
@@ -31,19 +33,22 @@ describe('Text Controller unit test', () => {
     describe('create', () => {
         it('should redirect to \'/dashboard\' page after create', async () => {
             req.body = {text: fakeText};
-            textService.insertText.mockResolvedValue(fakeText);
+            req.user.id = 1
+            textService.insertText.mockResolvedValue({id: 1, ...fakeText, UserId: req.user.id});
             await create(req, res);
-            expect(textService.insertText).toHaveBeenCalledWith(fakeText);
+            expect(textService.insertText).toHaveBeenCalledWith(fakeText, req.user.id);
             expect(res.redirect).toHaveBeenCalledWith('/dashboard');
         });
         it('should throw error for blank text create', async () => {
             req.body = {text: null};
+            req.user.id = 1
             textService.insertText.mockRejectedValue(new BadRequestError("Text is required!"));
             await create(req, res);
             expect(res.render).toHaveBeenCalledWith('error', {status: 400, error: 'Text is required!'});
         });
         it('should throw error for blank text create', async () => {
             req.body = {text: fakeText};
+            req.user.id = 1
             textService.insertText.mockRejectedValue(new Error('DB Error'));
             await create(req, res);
             expect(res.render).toHaveBeenCalledWith('error', {status: 500, error: 'DB Error'});

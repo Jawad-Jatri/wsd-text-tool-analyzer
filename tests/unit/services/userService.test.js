@@ -1,4 +1,3 @@
-const User = require('../../../src/models/User');
 const {
     getUserById, insertUser, findOrCreateUserByEmail
 } = require('../../../src/services/userService');
@@ -6,17 +5,22 @@ const BadRequestError = require("../../../src/common/exceptions/badRequestError"
 const NotFoundError = require("../../../src/common/exceptions/notFoundError");
 const {fakeUser} = require('../../mocks');
 
-jest.mock('../../../src/models/User', () => ({
-    findOne: jest.fn(),
-    findAll: jest.fn(),
-    create: jest.fn(),
-    destroy: jest.fn(),
-    update: jest.fn(),
-}));
+jest.mock('../../../src/models', () => {
+    const {fakeUser} = require('../../mocks');
+    const SequelizeMock = require('sequelize-mock');
+    const dbMock = new SequelizeMock();
+    const UserMock = dbMock.define('User', fakeUser);
+    return {
+        User: UserMock,
+    };
+});
 
 describe('User Service unit test', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+    let UserMock;
+
+    beforeAll(() => {
+        const {User} = require('../../../src/models');
+        UserMock = User;
     });
 
     describe('getUserById', () => {
@@ -27,17 +31,17 @@ describe('User Service unit test', () => {
         });
 
         it('should throw NotFoundError if user is not found', async () => {
-            User.findOne.mockResolvedValue(null);
+            UserMock.findOne = jest.fn().mockResolvedValue(null);
             const res = getUserById(1);
             await expect(res).rejects.toThrow(NotFoundError);
             await expect(res).rejects.toThrow('User not found!');
         });
 
         it('should return the user if found', async () => {
-            User.findOne.mockResolvedValue(fakeUser);
+            UserMock.findOne = jest.fn().mockResolvedValue(fakeUser);
 
             const res = await getUserById(1);
-            expect(User.findOne).toHaveBeenCalledWith({where: {id: 1}});
+            expect(UserMock.findOne).toHaveBeenCalledWith({where: {id: 1}});
             expect(res).toEqual(fakeUser);
         });
     });
@@ -62,10 +66,10 @@ describe('User Service unit test', () => {
         });
 
         it('should insert user and return the created user', async () => {
-            User.create.mockResolvedValue({id: 1, ...fakeUser});
+            UserMock.create = jest.fn().mockResolvedValue({id: 1, ...fakeUser});
 
             const res = await insertUser(fakeUser.name, fakeUser.email, fakeUser.googleId);
-            expect(User.create).toHaveBeenCalledWith({...fakeUser});
+            expect(UserMock.create).toHaveBeenCalledWith({...fakeUser});
             expect(res).toEqual({id: 1, ...fakeUser});
         });
     });
@@ -90,21 +94,21 @@ describe('User Service unit test', () => {
         });
 
         it('should get user email already exist', async () => {
-            User.findOne.mockResolvedValue({id: 1, ...fakeUser});
+            UserMock.findOne = jest.fn().mockResolvedValue({id: 1, ...fakeUser});
 
             const res = await findOrCreateUserByEmail(fakeUser.name, fakeUser.email, fakeUser.googleId);
-            expect(User.create).not.toHaveBeenCalledWith();
-            expect(User.findOne).toHaveBeenCalledWith({where: {email: fakeUser.email}});
+            expect(UserMock.create).not.toHaveBeenCalledWith();
+            expect(UserMock.findOne).toHaveBeenCalledWith({where: {email: fakeUser.email}});
             expect(res).toEqual({id: 1, ...fakeUser});
         });
 
         it('should insert user and return the created user', async () => {
-            User.create.mockResolvedValue({id: 1, ...fakeUser});
-            User.findOne.mockResolvedValue(null);
+            UserMock.create = jest.fn().mockResolvedValue({id: 1, ...fakeUser});
+            UserMock.findOne = jest.fn().mockResolvedValue(null);
 
             const res = await findOrCreateUserByEmail(fakeUser.name, fakeUser.email, fakeUser.googleId);
-            expect(User.create).toHaveBeenCalledWith(fakeUser);
-            expect(User.findOne).toHaveBeenCalledWith({where: {email: fakeUser.email}});
+            expect(UserMock.create).toHaveBeenCalledWith(fakeUser);
+            expect(UserMock.findOne).toHaveBeenCalledWith({where: {email: fakeUser.email}});
             expect(res).toEqual({id: 1, ...fakeUser});
         });
     });
