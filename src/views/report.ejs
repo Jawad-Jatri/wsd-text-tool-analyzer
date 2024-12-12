@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Text Analysis Report</title></head>
+<body>
+<h1>Report</h1>
+<div>
+    <p>Text: <%= report.text %></p>
+    <p>Number of words: <%= report.words %></p>
+    <p>Number of characters: <%= report.characters %></p>
+    <p>Number of paragraphs: <%= report.paragraphs %></p>
+    <p>Number of sentence: <%= report.sentence %></p>
+    <p>Number of longest words in each paragraph:</p>
+    <ul>
+        <% report.longestWord.forEach((obj) => { %>
+            <li>
+                <%= obj.paragraph %> : <%= obj.longestWords.join(",") %>
+            </li>
+        <% }) %>
+    </ul>
+    <a href="/dashboard">Go Back</a>
+</div>
+</body>
+</html>

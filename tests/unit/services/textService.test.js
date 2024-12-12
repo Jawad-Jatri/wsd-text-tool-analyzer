@@ -9,7 +9,8 @@ const {
     characterCountInText,
     sentenceCountInText,
     paragraphCountInText,
-    longestWordsByParagraphs
+    longestWordsByParagraphs,
+    getReportByTextId
 } = require('../../../src/services/textService');
 const BadRequestError = require("../../../src/common/exceptions/badRequestError");
 const NotFoundError = require("../../../src/common/exceptions/notFoundError");
@@ -168,6 +169,50 @@ describe('Text Service unit test', () => {
 
             const res = updateText(1, fakeText);
             await expect(res).rejects.toThrow('DB error');
+        });
+    });
+    describe('getReportByTextId', () => {
+        it('should throw BadRequestError if id is not provided', async () => {
+            const res = getReportByTextId();
+            await expect(res).rejects.toThrow(BadRequestError);
+            await expect(res).rejects.toThrow('Id is required!');
+        });
+
+        it('should throw NotFoundError if text is not found', async () => {
+            TextMock.findOne = jest.fn().mockResolvedValue(null);
+            const res = getReportByTextId(1);
+            await expect(res).rejects.toThrow(NotFoundError);
+            await expect(res).rejects.toThrow('Text not found!');
+        });
+
+        it('should return text report', async () => {
+            TextMock.findOne = jest.fn().mockResolvedValue({
+                id: fakeTextAnalysisReport.id,
+                text: fakeTextAnalysisReport.text
+            });
+
+            const res = await getReportByTextId(fakeTextAnalysisReport.id);
+            expect(TextMock.findOne).toHaveBeenCalledWith({where: {id: fakeTextAnalysisReport.id}});
+            expect(typeof res).toBe('object');
+            expect(res).toEqual(
+                expect.objectContaining(
+                    {
+                        id: fakeTextAnalysisReport.id,
+                        text: fakeTextAnalysisReport.text,
+                        words: expect.any(Number),
+                        characters: expect.any(Number),
+                        paragraphs: expect.any(Number),
+                        sentence: expect.any(Number),
+                        longestWord: expect.arrayContaining([
+                            expect.objectContaining(
+                                {
+                                    paragraph: expect.any(String),
+                                    longestWords: expect.arrayContaining([expect.any(String)])
+                                }
+                            )
+                        ])
+                    })
+            );
         });
     });
     describe('wordCountInText', () => {
