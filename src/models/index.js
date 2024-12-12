@@ -2,6 +2,9 @@ const sequelize = require('../config/db');
 const Text = require('../models/Text');
 const User = require('../models/User');
 
+User.hasMany(Text, {onDelete: 'CASCADE'});
+Text.belongsTo(User);
+
 const db = {
     sequelize,
     Text,
