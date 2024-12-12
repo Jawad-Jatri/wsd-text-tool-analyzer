@@ -11,12 +11,14 @@
     <% texts.forEach((text) => { %>
         <li>
             <%= text.text %>
-            <a href="/edit/<%= text.id %>">Edit</a>
+            <a href="/edit/<%= text.id %>" style="padding-right: 10px">Edit</a>
+            <a href="/report/<%= text.id %>" style="padding-right: 10px">Report</a>
             <form action="/delete/<%= text.id %>" method="POST" style="display:inline;">
                 <button type="submit">Delete</button>
             </form>
         </li>
     <% }) %>
 </ul>
+<a href="/logout" style="padding-left: 10px">Logout</a>
 </body>
 </html>
