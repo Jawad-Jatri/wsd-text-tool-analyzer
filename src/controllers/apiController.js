@@ -1,19 +1,19 @@
-const {Text} = require('../models');
-const NotFoundError = require("../common/exceptions/notFoundError");
 const successResponse = require("../common/response/successResponse");
+const {
+    wordCountInText,
+    sentenceCountInText,
+    characterCountInText,
+    paragraphCountInText,
+    longestWordsByParagraphs
+} = require("../services/textService");
 
 const apiController = {
     wordCount: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const text = await Text.findOne({where: {id: id}});
-
-            if (!text) {
-                next(new NotFoundError("Text not found!"));
-            }
 
             return successResponse(res, {
-                count: text.text.replace(/[.,!?;:()"'`]/g, "").split(/\s+/).length,
+                count: await wordCountInText(id)
             });
         } catch (err) {
             next(err);
@@ -22,14 +22,9 @@ const apiController = {
     characterCount: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const text = await Text.findOne({where: {id: id}});
-
-            if (!text) {
-                next(new NotFoundError("Text not found!"));
-            }
 
             return successResponse(res, {
-                count: text.text.length
+                count: await characterCountInText(id)
             });
         } catch (err) {
             next(err);
@@ -38,14 +33,9 @@ const apiController = {
     sentenceCount: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const text = await Text.findOne({where: {id: id}});
-
-            if (!text) {
-                next(new NotFoundError("Text not found!"));
-            }
 
             return successResponse(res, {
-                count: (text.text.match(/[.!?]/g) || []).length
+                count: await sentenceCountInText(id)
             });
         } catch (err) {
             next(err);
@@ -54,14 +44,9 @@ const apiController = {
     paragraphCount: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const text = await Text.findOne({where: {id: id}});
-
-            if (!text) {
-                next(new NotFoundError("Text not found!"));
-            }
 
             return successResponse(res, {
-                count: text.text.split('\n').length
+                count: await paragraphCountInText(id)
             });
         } catch (err) {
             next(err);
@@ -70,25 +55,8 @@ const apiController = {
     longestWordsInParagraphs: async (req, res, next) => {
         try {
             const {id} = req.params;
-            const text = await Text.findOne({where: {id: id}});
 
-            if (!text) {
-                next(new NotFoundError("Text not found!"));
-            }
-            const paragraphs = text.text.split('\n');
-
-            const data = paragraphs.map(paragraph => {
-                const words = paragraph.replace(/[.,!?;:()"'`]/g, " ").split(/\s+/);
-                const maxLength = Math.max(...words.map(word => word.length));
-                const longestWords = words.filter(word => word.length === maxLength);
-
-                return {
-                    paragraph,
-                    longestWords
-                };
-            });
-
-            return successResponse(res, data);
+            return successResponse(res, await longestWordsByParagraphs(id));
         } catch (err) {
             next(err);
         }

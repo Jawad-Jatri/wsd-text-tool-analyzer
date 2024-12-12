@@ -15,6 +15,13 @@ module.exports = {
         max: process.env.MAX_RATE_LIMIT || 5,
         windowInS: process.env.RATE_LIMIT_WINDOW_IN_SECONDS || 60,
     },
+    oauth: {
+        googleClientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
+        googleClientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+        callbackUrl: process.env.OAUTH_CALLBACK_URL || "/auth/google/callback",
+        jwtToken: process.env.JWT_SECRET || "Lkbn1h?b5IQE&ucKIt{y3?PpCGDw%S3k6tbM:/WoI>+2qO8o",
+        sessionToken: process.env.SESSION_SECRET || "bn1E&ucKIt{y3?PpCGDw%S3k6tb",
+    },
     cache: {
         prefix: process.env.CACHE_PREFIX || 'WSD',
         timeout: process.env.CACHE_TIMEOUT_IN_SECONDS || 60,

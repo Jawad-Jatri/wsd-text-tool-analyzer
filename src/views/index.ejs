@@ -3,20 +3,22 @@
 <head><title>Text List</title></head>
 <body>
 <h1>Text List</h1>
+<form action="/create" method="POST">
+    <textarea type="text" name="text" placeholder="New text" required></textarea>
+    <button type="submit">Add</button>
+</form>
 <ul>
     <% texts.forEach((text) => { %>
         <li>
             <%= text.text %>
-            <a href="/edit/<%= text.id %>">Edit</a>
+            <a href="/edit/<%= text.id %>" style="padding-right: 10px">Edit</a>
+            <a href="/report/<%= text.id %>" style="padding-right: 10px">Report</a>
             <form action="/delete/<%= text.id %>" method="POST" style="display:inline;">
                 <button type="submit">Delete</button>
             </form>
         </li>
     <% }) %>
 </ul>
-<form action="/create" method="POST">
-    <textarea type="text" name="text" placeholder="New text" required></textarea>
-    <button type="submit">Add</button>
-</form>
+<a href="/logout" style="padding-left: 10px">Logout</a>
 </body>
 </html>

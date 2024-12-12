@@ -1,33 +1,67 @@
-const {Text} = require('../models');
+const {
+    getTextById,
+    getTextsByUserId,
+    insertText,
+    deleteText,
+    updateText,
+    getReportByTextId
+} = require('../services/textService');
 
 const textController = {
     list: async (req, res) => {
-        res.render('index', {texts: await Text.findAll()});
+        try {
+            const {id} = req.user
+            res.render('index', {texts: await getTextsByUserId(id)});
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     create: async (req, res) => {
-        const {text} = req.body;
-        await Text.create({text});
-        res.redirect('/');
+        try {
+            const {text} = req.body;
+            const {id} = req.user
+            await insertText(text, id);
+            res.redirect('/dashboard');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     edit: async (req, res) => {
-        const {id} = req.params;
-        res.render('edit', {
-            text: await Text.findOne(
-                {where: {id}}
-            )
-        });
+        try {
+            const {id} = req.params;
+            res.render('edit', {
+                text: await getTextById(id)
+            });
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     update: async (req, res) => {
-        const {id} = req.params;
-        const {text} = req.body;
-        await Text.update({text},
-            {where: {id: id}});
-        res.redirect('/');
+        try {
+            const {id} = req.params;
+            const {text} = req.body;
+            await updateText(id, text);
+            res.redirect('/dashboard');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
     delete: async (req, res) => {
-        const {id} = req.params;
-        await Text.destroy({where: {id: id}});
-        res.redirect('/');
+        try {
+            const {id} = req.params;
+            await deleteText(id);
+            res.redirect('/dashboard');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
+    },
+    report: async (req, res) => {
+        try {
+            const {id} = req.params;
+            res.render('report', {report: await getReportByTextId(id)});
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
     },
 };
 
