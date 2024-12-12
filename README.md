@@ -2,6 +2,12 @@ Project Overview:
 
 A text analyzer tool.
 
+Backend Framework: ExpressJS,\
+SQL: MySQL(Sequelize),\
+Frontend Template: EJS\
+Testing Framework: Jest\
+Oauth2: Google
+
 Setup:
 
 1. run "yarn install"
