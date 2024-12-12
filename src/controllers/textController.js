@@ -3,7 +3,8 @@ const {
     getTextsByUserId,
     insertText,
     deleteText,
-    updateText
+    updateText,
+    getReportByTextId
 } = require('../services/textService');
 
 const textController = {
@@ -50,6 +51,14 @@ const textController = {
             const {id} = req.params;
             await deleteText(id);
             res.redirect('/dashboard');
+        } catch (error) {
+            res.render('error', {status: error.status || 500, error: error.message});
+        }
+    },
+    report: async (req, res) => {
+        try {
+            const {id} = req.params;
+            res.render('report', {report: await getReportByTextId(id)});
         } catch (error) {
             res.render('error', {status: error.status || 500, error: error.message});
         }

@@ -31,6 +31,30 @@ const textService = {
             throw error;
         }
     },
+    getReportByTextId: async (id) => {
+        try {
+            if (!id) {
+                throw new BadRequestError("Id is required!");
+            }
+            const text = await Text.findOne(
+                {where: {id}}
+            );
+            if (!text) {
+                throw new NotFoundError("Text not found!");
+            }
+            return {
+                id: text.id,
+                text: text.text,
+                words: await textService.wordCountInText(id),
+                characters: await textService.characterCountInText(id),
+                paragraphs: await textService.paragraphCountInText(id),
+                sentence: await textService.sentenceCountInText(id),
+                longestWord: await textService.longestWordsByParagraphs(id),
+            }
+        } catch (error) {
+            throw error;
+        }
+    },
     findAllText: async () => {
         try {
             return await Text.findAll();
